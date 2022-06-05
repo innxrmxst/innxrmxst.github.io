@@ -20,7 +20,7 @@ navbar-links:
     - HackerOne: "https://hackerone.com/hen51"
     - HackTheBox: "https://www.hackthebox.com/home/users/profile/914542"
     - TryHackMe: "https://tryhackme.com/p/innxrmxst"
-    Donate: "https://www.buymeacoffee.com/1nnxrmxst"
+      Donate: "https://www.buymeacoffee.com/1nnxrmxst"
 
 # --- Logo --- #
 

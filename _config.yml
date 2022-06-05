@@ -18,7 +18,8 @@ navbar-links:
   Resources:
     - GitHub: "https://github.com/innxrmxst/"
     - HackerOne: "https://hackerone.com/hen51"
-  Author's HackTheBox: "https://www.hackthebox.com/home/users/profile/914542"
+    - HackTheBox: "https://www.hackthebox.com/home/users/profile/914542"
+    - TryHackMe: "https://tryhackme.com/p/innxrmxst"
 
 # --- Logo --- #
 

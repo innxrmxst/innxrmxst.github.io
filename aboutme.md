@@ -4,13 +4,11 @@ title: About me
 subtitle: What I do
 ---
 
-Security Engineer (Penetration tester).
+Junior Security Engineer (Penetration tester).
 
 Posting here:
 
-- HackTheBox Writeups
-- TryHackMe Writeups
-- Vulnhub Writeups
+- HackTheBox, TryHackMe and Vulnhub writeups
 
 
-Check out by GitHub page [GitHub](https://github.com/innxrmxst/).
+Check out my GitHub page [GitHub](https://github.com/innxrmxst/).

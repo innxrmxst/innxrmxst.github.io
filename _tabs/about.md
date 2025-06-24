@@ -4,7 +4,7 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-## Red Team Operator
+## Maksym H.
 
 I'm a 22-year-old cybersecurity specialist from the EU with a strong interest in both offensive and defensive aspects of the field.
 

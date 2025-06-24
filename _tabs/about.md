@@ -4,7 +4,9 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-## Cybersecurity Specialist | Bridging Offensive & Defensive Security
+## Red Team Operator
+
+I'm a 22-year-old cybersecurity specialist from the EU with a strong interest in both offensive and defensive aspects of the field.
 
 Skills:
 - Penetration Testing

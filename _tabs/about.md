@@ -15,7 +15,7 @@ I'm a 22-year-old cybersecurity specialist from the EU with a strong interest in
 - System Administration
 - Security Automation & Tool Development
 
-4+ YOE
+4+ YOE.
 
 ### Certifications:
 

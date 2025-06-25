@@ -8,7 +8,7 @@ order: 4
 
 I'm a 22-year-old cybersecurity specialist from the EU with 4+ YOE and a strong interest in both offensive and defensive aspects of the field.
 
-### Skills:
+### Skills & Interests:
 - Penetration Testing
 - Red Team Operations & Adversary Simulation
 - Threat Hunting & Incident Response

@@ -6,7 +6,7 @@ order: 4
 
 ## Maksym H.
 
-I'm a 22-year-old cybersecurity specialist from the EU with a strong interest in both offensive and defensive aspects of the field.
+I'm a 22-year-old cybersecurity specialist from the EU with 4+ YOE and a strong interest in both offensive and defensive aspects of the field.
 
 ### Skills:
 - Penetration Testing
@@ -15,7 +15,6 @@ I'm a 22-year-old cybersecurity specialist from the EU with a strong interest in
 - System Administration
 - Security Automation & Tool Development
 
-4+ YOE.
 
 ### Certifications:
 
@@ -29,20 +28,29 @@ I'm a 22-year-old cybersecurity specialist from the EU with a strong interest in
 - [Practical Network Penetration Tester (PNPT)](https://certified.tcm-sec.com/5873d045-021a-4d11-a660-8939cffb0a56)
 - [eLearnSecurity Junior Penetration Tester (eJPT)](https://certs.ine.com/b49fa364-654d-462e-8eff-1d325d637505)
 - [Certified Red Team Professional (CRTP)](https://www.credential.net/ae71e583-58e0-4c30-b06e-825f3ca4cadf)
-- [Attacking Active Directory with Linux](https://www.credential.net/32a4a63d-b270-4aa5-9a9b-8e1788a7b34c)
+
+### Courses & Labs
 
 - [Linux Privilege Escalation for OSCP & Beyond!](https://www.udemy.com/certificate/UC-757800d6-221d-4a1b-90bc-367117b555ee/)
 - [Windows Privilege Escalation for OSCP & Beyond!](https://www.udemy.com/certificate/UC-f730fefc-e5ef-4640-9139-5b8266fe1383/)
+- [Introduction to Cyber Security Learning Path](https://tryhackme-certificates.s3-eu-west-1.amazonaws.com/THM-G76XLDCIK5.pdf)
+- [Attacking Active Directory with Linux Lab](https://www.credential.net/32a4a63d-b270-4aa5-9a9b-8e1788a7b34c)
+- [Wreath Lab](https://tryhackme.com/innxrmxst/badges/wreath)
+- [ADVersary Lab](https://tryhackme.com/innxrmxst/badges/adversary)
 
 ### Links
 
 - [GitHub](https://github.com/innxrmxst)
 - [HackerOne BugBounty - Bypass of restrictions on external links](https://hackerone.com/reports/956449)
 
-Here are my two HackTheBox profiles (from old and new platforms):
+HackTheBox profiles:
 
 - [hensitskyi](https://app.hackthebox.com/users/222289)
 - [innxrmxst](https://app.hackthebox.com/profile/914542)
 
-Mail contact: [innxrmxst@gmail.com](mailto:innxrmxst@gmail.com)
+TryHackMe profile
+- [innxrmxst](https://tryhackme.com/p/innxrmxst)
 
+### Mail contact:
+
+[innxrmxst@gmail.com](mailto:innxrmxst@gmail.com)

@@ -9,6 +9,7 @@ order: 4
 I'm a 22-year-old cybersecurity specialist from the EU with 4+ YOE and a strong interest in both offensive and defensive aspects of the field.
 
 ### Skills & Interests:
+
 - Penetration Testing
 - Red Team Operations & Adversary Simulation
 - Threat Hunting & Incident Response
@@ -23,7 +24,7 @@ I'm a 22-year-old cybersecurity specialist from the EU with 4+ YOE and a strong 
 - [Certified Red Team Expert (CRTE)](https://www.credential.net/b7966972-4177-40d2-8482-edd2ed6f49c3)
 - [Certified CyberDefender (CCD)](https://www.credly.com/badges/71d0e81f-774f-481c-a29a-df4e65e83017/public_url)
 - [Certified Enterprise Security Professional (CESP - ADCS)](https://www.credential.net/0d7479be-ae25-4de7-9998-265f40694685)
-- [Certified Azure Red Team Professional](https://www.credential.net/69a107a8-d304-4306-9c5b-8403ac6e3c16)
+- [Certified Azure Red Team Professional (CARTE)](https://www.credential.net/69a107a8-d304-4306-9c5b-8403ac6e3c16)
 - [eLearnSecurity Certified Professional Penetration Tester (eCPPT)](https://certs.ine.com/a1925fd0-47dd-4ae9-80ff-384845ba218f)
 - [Practical Network Penetration Tester (PNPT)](https://certified.tcm-sec.com/5873d045-021a-4d11-a660-8939cffb0a56)
 - [eLearnSecurity Junior Penetration Tester (eJPT)](https://certs.ine.com/b49fa364-654d-462e-8eff-1d325d637505)
@@ -50,6 +51,12 @@ HackTheBox profiles:
 
 TryHackMe profile
 - [innxrmxst](https://tryhackme.com/p/innxrmxst)
+
+Most recent projects
+
+- [mssql-relay-lab](https://github.com/innxrmxst/mssql-relay-lab)
+- [lurked](https://github.com/innxrmxst/lurked)
+- [PAMinant](https://github.com/innxrmxst/PAMinant)
 
 ### Mail contact:
 

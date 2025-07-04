@@ -20,7 +20,7 @@ We are relaying on `GetAssemblies` to search preloaded assemblies in the PowerSh
 
 **Using `GetType` to obtain a reference to the `System.dll` assembly at runtime is an example of the Reflection technique.**
 
-We can use internal `Invoke` method to call `GetModuleHandle` and obtain the base address of an unmanaged DLL. The returned value is decimal and we transfer it into hexadecimal quivalent to obtain the actual memory address in a format of `0xdeadbeef`. The same applies to `GetProcAddress`.
+We can use internal `Invoke` method to call `GetModuleHandle` and obtain the base address of an unmanaged DLL. The returned value is decimal and we transfer it into hexadecimal quivalent to obtain the actual memory address. The same applies to `GetProcAddress`.
 
 The `LookupFunc` helper function does this by:
 
@@ -80,6 +80,8 @@ function LookupFunc {
 Later in our code, we will use it to save the result into a variable using format like so:
 
 `$Variable = LookupFunc "nameof.dll" "WinAPIFunctionName"`
+
+![MessageBoxAddress](https://i.imgur.com/ktAJtgs.png)
 
 
 ### DelegateType reflection - calling resolved functions
@@ -184,6 +186,8 @@ $MyFunction = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPo
 $MyFunction.Invoke([IntPtr]::Zero, "Hello World", "This is My MessageBox!", 0)
 ```
 
+![MessageBoxCreated](https://i.imgur.com/8o5Fl6j.png)
+
 If you read carefully, you might notice that we never call the defined constructor.
 
 We don't explicitly call `MyConstructorBuilder` because it's used internally by .NET when we create the delegate with `GetDelegateForFunctionPointer` - the constructor defines the delegate's structure, and .NET automatically uses it when converting the function pointer to a managed delegate. The Invoke method is what we call directly, while the constructor works behind the scenes.
@@ -245,6 +249,8 @@ $MyFunction = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPo
 
 $MyFunction.Invoke("notepad.exe", 5)
 ```
+
+![Notepad](https://i.imgur.com/S4QfCWz.png)
 
 Key Differences:
 - We use WinExec instead of MessageBoxA
@@ -333,3 +339,6 @@ $hThread = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPoint
 [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((LookupFunc kernel32,dll WaitForSingleObject), (getDelegateType @([IntPtr], [Int32]) ([Int]))).Invoke($hThread, 0xFFFFFFFF)
 
 ```
+
+![Shellcode](https://i.imgur.com/jgNPiez.png)
+

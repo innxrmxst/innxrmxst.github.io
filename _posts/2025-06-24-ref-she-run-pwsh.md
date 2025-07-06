@@ -344,6 +344,6 @@ $hThread = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPoint
 
 Through code obfuscation, I was able to evade the latest Windows Security signatures and achieve in-memory execution of Meterpreter shellcode as shown below:
 
-![Shellcode](https://i.imgur.com/9zzkyNi.png)
+![Bypass](https://i.imgur.com/9zzkyNi.png)
 
 Thanks for reading — on to the next challenge.

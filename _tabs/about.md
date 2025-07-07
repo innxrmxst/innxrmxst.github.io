@@ -11,7 +11,7 @@ I'm a 22-year-old cybersecurity specialist from the Europe with 5 years of corpo
 ### Skills & Interests:
 
 - Penetration Testing
-- Red Team Operations & Adversary Simulation
+- RedTeam Operations & Adversary Simulation
 - Threat Hunting & Incident Response
 - System Administration
 - Security Automation & Tool Development

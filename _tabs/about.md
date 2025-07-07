@@ -30,7 +30,7 @@ I'm a 22-year-old cybersecurity specialist from the Europe with 5 years of corpo
 - [eLearnSecurity Junior Penetration Tester (eJPT)](https://certs.ine.com/b49fa364-654d-462e-8eff-1d325d637505)
 - [Certified Red Team Professional (CRTP)](https://www.credential.net/ae71e583-58e0-4c30-b06e-825f3ca4cadf)
 
-### Courses & Labs
+### Courses & labs
 
 - [Linux Privilege Escalation for OSCP & Beyond!](https://www.udemy.com/certificate/UC-757800d6-221d-4a1b-90bc-367117b555ee/)
 - [Windows Privilege Escalation for OSCP & Beyond!](https://www.udemy.com/certificate/UC-f730fefc-e5ef-4640-9139-5b8266fe1383/)
@@ -61,6 +61,3 @@ Most recent projects
 ### Mail contact:
 
 [innxrmxst@gmail.com](mailto:innxrmxst@gmail.com)
-
----
-

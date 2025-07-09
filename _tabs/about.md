@@ -6,7 +6,7 @@ order: 4
 
 ## Maksym Hensitskyi
 
-I'm a 22-year-old cybersecurity specialist from the Europe with 5 years of corporate expirience and a strong interest in both offensive and defensive aspects of the field.
+I'm a 22-year-old cybersecurity specialist from Poland with 4+ years of corporate expirience and a strong interest in both offensive and defensive aspects of the field.
 
 ### Skills & Interests:
 

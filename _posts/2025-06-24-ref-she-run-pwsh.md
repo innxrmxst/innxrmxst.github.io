@@ -349,20 +349,3 @@ Through code obfuscation, I was able to evade the latest Windows Security signat
 Thanks for reading — on to the next challenge.
 
 ---
-
-## Support my work
-
-<div align="center">
-  <script type="text/javascript" 
-          src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" 
-          data-name="bmc-button" 
-          data-slug="1nnxrmxst" 
-          data-color="#808080" 
-          data-emoji="☕" 
-          data-font="Comic" 
-          data-text="Buy me a coffee" 
-          data-outline-color="#ffffff" 
-          data-font-color="#ffffff" 
-          data-coffee-color="#FFDD00">
-  </script>
-</div>

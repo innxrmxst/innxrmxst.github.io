@@ -4,20 +4,25 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-## Maksym Hensitskyi
+## Maksym Hensitskyi 
 
-I'm a 22-year-old cybersecurity specialist from Poland with 4+ years of corporate expirience and a strong interest in both offensive and defensive aspects of the field.
+Cybersecurity specialist based in Poland 🇵🇱, with over 4 years of experience in both offensive and defensive security.
 
-### Skills & Interests:
+### Skills & Interests ⚔️
 
 - Penetration Testing
-- RedTeam Operations & Adversary Simulation
+- RedTeam Operations & Adversary Emulation
 - Threat Hunting & Incident Response
 - System Administration
 - Security Automation & Tool Development
 
+### GitHub projects 🛠️ 
 
-### Certifications:
+- [mssql-relay-lab](https://github.com/innxrmxst/mssql-relay-lab) — A tool for MSSQL relaying to SMB.
+- [lurked](https://github.com/innxrmxst/lurked) — A proof-of-concept stealthy agent leveraging QEMU virtualization and a Linux rootkit for process hiding.
+- [PAMinant](https://github.com/innxrmxst/PAMinant) — A PAM backdoor toolkit designed for access persistence on Linux systems.
+
+### Certifications 🎓
 
 - [OffSec Certified Professional (OSCP)](https://credentials.offsec.com/1a1b245e-01af-47ca-a35a-e5a55df2e666)
 - [Red Team Operator (CRTO)](https://eu.badgr.com/public/assertions/YCOpfKbZSgK0ANr4_AUJYA)
@@ -30,7 +35,7 @@ I'm a 22-year-old cybersecurity specialist from Poland with 4+ years of corporat
 - [eLearnSecurity Junior Penetration Tester (eJPT)](https://certs.ine.com/b49fa364-654d-462e-8eff-1d325d637505)
 - [Certified Red Team Professional (CRTP)](https://www.credential.net/ae71e583-58e0-4c30-b06e-825f3ca4cadf)
 
-### Courses & labs
+### Courses & labs 🧪
 
 - [Linux Privilege Escalation for OSCP & Beyond!](https://www.udemy.com/certificate/UC-757800d6-221d-4a1b-90bc-367117b555ee/)
 - [Windows Privilege Escalation for OSCP & Beyond!](https://www.udemy.com/certificate/UC-f730fefc-e5ef-4640-9139-5b8266fe1383/)
@@ -39,25 +44,19 @@ I'm a 22-year-old cybersecurity specialist from Poland with 4+ years of corporat
 - [Wreath Lab](https://tryhackme.com/innxrmxst/badges/wreath)
 - [ADVersary Lab](https://tryhackme.com/innxrmxst/badges/adversary)
 
-### Links
+### Platforms 💻
 
-- [GitHub](https://github.com/innxrmxst)
-- [HackerOne BugBounty - Bypass of restrictions on external links](https://hackerone.com/reports/956449)
+**HackerOne:**
 
-HackTheBox profiles:
+- [Bypass of restrictions on external links](https://hackerone.com/reports/956449)
+
+**HackTheBox:**
 
 - [hensitskyi](https://app.hackthebox.com/users/222289)
 - [innxrmxst](https://app.hackthebox.com/profile/914542)
 
-TryHackMe profile
+**TryHackMe:**
+
 - [innxrmxst](https://tryhackme.com/p/innxrmxst)
 
-Most recent projects
-
-- [mssql-relay-lab](https://github.com/innxrmxst/mssql-relay-lab)
-- [lurked](https://github.com/innxrmxst/lurked)
-- [PAMinant](https://github.com/innxrmxst/PAMinant)
-
-### Mail contact:
-
-[innxrmxst@gmail.com](mailto:innxrmxst@gmail.com)
+---

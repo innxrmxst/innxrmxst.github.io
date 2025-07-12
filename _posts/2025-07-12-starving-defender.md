@@ -45,7 +45,7 @@ Once again, the downloaded Meterpreter payload is detected, but this time, the J
 
 ## Overloading the CPU
 
-![Cat](https://i.imgur.com/CseMH1H.jpeg)
+![Catfender](https://i.imgur.com/5TR2Szu.png)
 
 To successfully execute Meterpreter with this technique, we need to spam multiple `cscript.exe` processes running our `obf.js` script, which will exhaust the CPU due to Defender's `MsMpEng.exe` process.
 
@@ -61,13 +61,13 @@ for /l %%i in (1,1,500) do (
 We can execute this batch script multiple times and wait a few seconds.
 
 <div style="text-align: center;">
-  <video width="640" height="360" controls>
+  <video width="100%" height="auto" controls playsinline webkit-playsinline x-webkit-airplay="allow" style="max-width: 640px;">
     <source src="https://i.imgur.com/Cr8xbD4.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 </div>
 
-After a while, the Meterpreter session will terminate, but as shown in the video, there is still enough time to perform migration, dump hashes from the SAM database, and more.
+After some time, the Meterpreter session might terminate, but as demonstrated in the video, there is still sufficient time to perform migration, dump hashes from the SAM database, and carry out additional operations.
 
 ---
 

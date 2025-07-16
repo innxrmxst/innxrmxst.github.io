@@ -6,8 +6,6 @@ order: 4
 
 ## Maksym Hensitskyi 
 
-
-
 I’m cybersecurity specialist based in Poland 🇵🇱, with over 4 years of experience in both offensive and defensive security. I currently work as an Infrastructure Penetration Tester and Red Team Operator at Tenendo, where I simulate advanced adversaries and conduct purple team operations to help organizations identify and fix their most critical weaknesses before real attackers can exploit them.
 
 Over the past few years, I’ve built a strong foundation in penetration testing, red teaming, and threat hunting by working with leading security teams across Europe. At WithSecure, I served as an Associate Threat Hunter, delivering 24/7 monitoring and incident response, enhancing detection capabilities, and performing forensic analysis to uncover attack paths and root causes.
@@ -35,6 +33,7 @@ I believe that rigorous testing and adversarial thinking are essential to buildi
 - [mssql-relay-lab](https://github.com/innxrmxst/mssql-relay-lab) — A tool for MSSQL relaying to SMB.
 - [lurked](https://github.com/innxrmxst/lurked) — A proof-of-concept stealthy agent leveraging QEMU virtualization and a Linux rootkit for process hiding.
 - [PAMinant](https://github.com/innxrmxst/PAMinant) — A PAM backdoor toolkit designed for access persistence on Linux systems.
+- [BOF-Skeletons](https://github.com/innxrmxst/BOF-Skeletons) - A collection of buffer overflow exploits and vulnerable apps I used to prepare for cybersecurity certifications.
 
 ### Certifications 🎓
 

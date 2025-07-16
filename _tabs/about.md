@@ -6,12 +6,26 @@ order: 4
 
 ## Maksym Hensitskyi 
 
-Cybersecurity specialist based in Poland 🇵🇱, with over 4 years of experience in both offensive and defensive security.
+
+
+I’m cybersecurity specialist based in Poland 🇵🇱, with over 4 years of experience in both offensive and defensive security. I currently work as an Infrastructure Penetration Tester and Red Team Operator at Tenendo, where I simulate advanced adversaries and conduct purple team operations to help organizations identify and fix their most critical weaknesses before real attackers can exploit them.
+
+Over the past few years, I’ve built a strong foundation in penetration testing, red teaming, and threat hunting by working with leading security teams across Europe. At WithSecure, I served as an Associate Threat Hunter, delivering 24/7 monitoring and incident response, enhancing detection capabilities, and performing forensic analysis to uncover attack paths and root causes.
+
+Prior to that, I spent nearly two years as a Penetration Tester at Eurofins, where I specialized in deep-dive infrastructure and Active Directory assessments — often finding privilege escalation chains and RCE paths leading to full domain compromise and company-wide fixes. I also worked closely with clients to guide remediation, improve security architecture, and communicate findings in a clear, actionable way.
+
+Earlier in my journey, I contributed to a range of internal and external security projects as an Ethical Hacker at CYBEROO, collaborating with both offensive and defensive teams, mentoring interns, and directly supporting blue teams during high-impact investigations.
+
+Even before entering the industry professionally, I was immersed in hands-on learning: building vulnerable labs, breaking into Hack The Box, diving into bug bounties, devouring technical writeups, and documenting everything in a growing personal knowledge base. This dedication during my career break helped lay the groundwork for my current roles and keeps me sharp today.
+
+Outside of work, I’m constantly exploring new offensive techniques, developing custom tooling, and participating in the cybersecurity community. Whether it’s maldev, AV/EDR evasion, TTP research, or improving threat emulation.
+
+I believe that rigorous testing and adversarial thinking are essential to building resilient systems. If you're passionate about cybersecurity, always looking to break things for the better, or just want to chat about obscure TTPs and purple teaming - let’s connect!
 
 ### Skills & Interests ⚔️
 
 - Penetration Testing
-- RedTeam Operations & Adversary Emulation
+- RedTeam Operations & Adversary Simulation
 - Threat Hunting & Incident Response
 - System Administration
 - Security Automation & Tool Development

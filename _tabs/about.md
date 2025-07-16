@@ -57,6 +57,14 @@ I believe that rigorous testing and adversarial thinking are essential to buildi
 - [Attacking Active Directory with Linux Lab](https://www.credential.net/32a4a63d-b270-4aa5-9a9b-8e1788a7b34c)
 - [Wreath Lab](https://tryhackme.com/innxrmxst/badges/wreath)
 - [ADVersary Lab](https://tryhackme.com/innxrmxst/badges/adversary)
+- [Practical Ethical Hacking - The Complete Course](https://i.imgur.com/mhyUtbe.png)
+- [Windows Privilege Escalation for Beginners](https://i.imgur.com/hnOZSut.png)
+- [Linux Privilege Escalation for Beginners](https://i.imgur.com/F4XuvgV.png)
+- [Open-Source Intelligence (OSINT) Fundamentals](https://i.imgur.com/p9EPu5c.png)
+- [External Pentest Playbook](https://i.imgur.com/ylWveeZ.png)
+- [Practical Web Application Security and Testing](https://i.imgur.com/e1N9ie8.png)
+
+and others.
 
 ### Platforms 💻
 

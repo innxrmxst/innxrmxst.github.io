@@ -4,19 +4,21 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-## Maksym Hensitskyi 
+## Maksym H. aka innxrmxst
 
-I’m cybersecurity specialist based in Poland 🇵🇱, with over 4 years of experience in both offensive and defensive security. I currently work as an Infrastructure Penetration Tester and Red Team Operator at Tenendo, where I simulate advanced adversaries and conduct purple team operations to help organizations identify and fix their most critical weaknesses before real attackers can exploit them.
+I’m a cybersecurity specialist based in Poland 🇵🇱 with over 5 years of hands-on experience across offensive and defensive security. I’m currently working at Securitum as a Penetration Tester, where I perform a wide range of security assessments for external clients — covering infrastructure, web applications, cloud environments, Active Directory, and various emerging technologies.
 
-Over the past few years, I’ve built a strong foundation in penetration testing, red teaming, and threat hunting by working with leading security teams across Europe. At WithSecure, I served as an Associate Threat Hunter, delivering 24/7 monitoring and incident response, enhancing detection capabilities, and performing forensic analysis to uncover attack paths and root causes.
+Previously, I worked as an Infrastructure Penetration Tester and Red Team Operator at Tenendo, contributing to adversary simulations and purple team initiatives designed to uncover critical weaknesses before real attackers could exploit them.
 
-Prior to that, I spent nearly two years as a Penetration Tester at Eurofins, where I specialized in deep-dive infrastructure and Active Directory assessments — often finding privilege escalation chains and RCE paths leading to full domain compromise and company-wide fixes. I also worked closely with clients to guide remediation, improve security architecture, and communicate findings in a clear, actionable way.
+Before that, I gained strong defensive expertise at WithSecure as an Associate Threat Hunter, providing 24/7 monitoring, incident response, detection engineering, and forensic analysis across large-scale enterprise environments.
 
-Earlier in my journey, I contributed to a range of internal and external security projects as an Ethical Hacker at CYBEROO, collaborating with both offensive and defensive teams, mentoring interns, and directly supporting blue teams during high-impact investigations.
+I also spent nearly two years as a Penetration Tester at Eurofins, specializing in deep-dive infrastructure and Active Directory assessments — frequently identifying privilege escalation paths, RCE chains, and full-domain compromise scenarios. I worked directly with clients to guide remediation and strengthen their security posture.
 
-Even before entering the industry professionally, I was immersed in hands-on learning: building vulnerable labs, breaking into Hack The Box, diving into bug bounties, devouring technical writeups, and documenting everything in a growing personal knowledge base. This dedication during my career break helped lay the groundwork for my current roles and keeps me sharp today.
+Earlier in my career, I contributed to both internal and external security projects as an Ethical Hacker at CYBEROO, collaborating with red and blue teams, mentoring interns, and supporting high-impact investigations.
 
-Outside of work, I’m constantly exploring new offensive techniques, developing custom tooling, and participating in the cybersecurity community. Whether it’s maldev, AV/EDR evasion, TTP research, or improving threat emulation.
+Even before entering the industry professionally, I was focused on practical learning: building vulnerable labs, solving Hack The Box machines, exploring bug bounties, studying offensive tooling, and maintaining a detailed personal knowledge base. That foundation still drives how I approach security today.
+
+Outside of work, I’m constantly exploring new offensive techniques, developing custom tooling, and participating in the cybersecurity community. Whether it’s maldev, AV/EDR evasion, TTP research, or improving threat simulation.
 
 I believe that rigorous testing and adversarial thinking are essential to building resilient systems. If you're passionate about cybersecurity, always looking to break things for the better, or just want to chat about obscure TTPs and purple teaming - let’s connect!
 

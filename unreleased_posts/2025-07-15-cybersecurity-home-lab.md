@@ -1,6 +1,14 @@
+---
+title: Setting up a home lab/offensive infrastructure using unused hardware
+date: 2025-12-25 +/-TTTT
+categories: [REDTEAM]
+tags: [lab,ludus]
+---
 
-Setting up a home lab/offensive infrastructure using unused hardware
 
+# This page is not finished yet.
+
+---
 
 Lately, Ludus has gained significant attention in the cybersecurity community due to its powerful features and capabilities. In this blog, we'll walk through the process of setting up a home lab or offensive infrastructure using an unused PC. This setup will allow you to practice various cybersecurity techniques without relying on expensive subscriptions.
 

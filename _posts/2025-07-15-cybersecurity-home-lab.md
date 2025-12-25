@@ -1,3 +1,10 @@
+---
+title: Setting Up a Home Lab/Offensive Infrastructure Using Your Unused PC
+date: 2025-25-12 +/-TTTT
+categories: [REDTEAM]
+tags: [lab,ludus]
+---
+
 # Setting Up a Home Lab/Offensive Infrastructure Using Your Unused PC
 
 # This page is not finished yet.

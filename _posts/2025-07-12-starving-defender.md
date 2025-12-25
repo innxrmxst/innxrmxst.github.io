@@ -1,9 +1,5 @@
-# ---
-# title: Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe 
-# date: 2025-07-12 +/-TTTT
-# categories: [REDTEAM]
-# tags: [evasion,meterpreter]
-# ---
+
+Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe 
 
 ## Important Note
 This technique was found to work only on Ludus Lab with `sysprep` enabled, which could potentially damage some Windows components and change their behavior, including security features. In Ludus, the relevant line in the config is:

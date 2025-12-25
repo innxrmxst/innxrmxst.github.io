@@ -1,9 +1,9 @@
----
-title: Setting up a home lab/offensive infrastructure using unused hardware
-date: 2025-12-25 +/-TTTT
-categories: [REDTEAM]
-tags: [lab,ludus]
----
+# ---
+# title: Setting up a home lab/offensive infrastructure using unused hardware
+# date: 2025-12-25 +/-TTTT
+# categories: [REDTEAM]
+# tags: [lab,ludus]
+# ---
 
 
 # This page is not finished yet.

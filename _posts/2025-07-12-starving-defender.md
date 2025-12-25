@@ -5,13 +5,15 @@ categories: [REDTEAM]
 tags: [evasion,meterpreter]
 ---
 
-## Important Note:
+## Important Note
 This technique was found to work only on Ludus Lab with `sysprep` enabled, which could potentially damage some Windows components and change their behavior, including security features. In Ludus, the relevant line in the config is:
 
     windows:            # This key must be set for windows VMs - all subkeys are optional  
       sysprep: false    # Set to true to run sysprep before any other tasks on this VM. Default: false
 
 I discovered this after writing this fancy blog, but I still wanted to keep it as is. The lesson learned from this experience is to avoid using this feature for future research.
+
+---
 
 ## JS Launcher
 

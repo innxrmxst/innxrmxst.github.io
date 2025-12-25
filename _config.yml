@@ -16,7 +16,7 @@ timezone: Europe/Warsaw
 
 title: innxrmxst # the main title
 
-tagline: Red Team Operator # it will display as the subtitle
+tagline: Pentester # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   Infosec blog.

@@ -1,2 +1,0 @@
----
-BUNDLE_BUILD__GOOGLE___PROTOBUF: "--with-protoc=/usr/bin/protoc"

@@ -1,0 +1,441 @@
+<h1 id="this-page-is-not-finished-yet">This page is not finished yet.</h1>
+
+<hr />
+
+<p>Lately, Ludus has gained significant attention in the cybersecurity community due to its powerful features and capabilities. In this blog, we’ll walk through the process of setting up a home lab or offensive infrastructure using an unused PC. This setup will allow you to practice various cybersecurity techniques without relying on expensive subscriptions.</p>
+
+<p>If you’re a cybersecurity professional looking for a network to practice on, this is the most cost-effective solution available. Ludus comes with its own set of predefined labs like GOAD, SCCM lab, and more.</p>
+
+<p>You can reuse the same home infrastructure and simply switch VPS/domains for different offensive operations.</p>
+
+<h2 id="requirements">Requirements</h2>
+
+<p>~$2-5 per month for a single 512MB - 2GB RAM VPS (Consider looking beyond expensive countries for affordable options)
+A computer or laptop with sufficient RAM and vCPU cores (SSD is highly recommended, and an NVIDIA GPU can be used for hash cracking)</p>
+
+<h2 id="what-youll-achieve">What You’ll Achieve</h2>
+
+<p>In this blog post, we’ll cover:</p>
+
+<ul>
+  <li>Proxmox + Ludus setup</li>
+  <li>WireGuard reverse VPN from VPS</li>
+  <li>The magic of socat UDP and SSH tunneling</li>
+  <li>Hash cracking station with a discrete GPU</li>
+  <li>BONUS: Domain registration, SSL, and DNS setup for Havoc C2</li>
+</ul>
+
+<p>By following this guide, you will be able to:</p>
+
+<ul>
+  <li>Host infrastructure locally and expose it to the internet without incurring high costs.</li>
+  <li>Access your home lab via VPN from anywhere, which is ideal for collaboration.</li>
+  <li>Perform hash cracking on the same Proxmox node.</li>
+  <li>Keep all your offensive tools organized and easily accessible.</li>
+</ul>
+
+<h2 id="disclaimer---read-this-carefully">DISCLAIMER - READ THIS CAREFULLY!</h2>
+
+<p>Please note that the information provided in this blog is intended solely for educational and research purposes. Unauthorized use of this knowledge to attack networks beyond your authorized scope may result in legal consequences. Additionally, improper setup could potentially expose your home network to the public internet, so exercise extreme caution.</p>
+
+<hr />
+
+<h2 id="part-1---installing-debian-proxmox-and-ludus">Part 1 - Installing Debian, Proxmox, and Ludus</h2>
+
+<p>Start by downloading Debian from https://www.debian.org/distrib/. Once downloaded, flash it onto an SD card and follow the installation instructions. After completing the installation, proceed to install Ludus following the guide available at https://docs.ludus.cloud/docs/quick-start/install-ludus/ .</p>
+
+<h3 id="etcpvestoragecfg-config">/etc/pve/storage.cfg config</h3>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="n">root</span><span class="err">@</span><span class="n">proxmox</span><span class="o">:~</span><span class="err">#</span> <span class="n">cat</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">pve</span><span class="o">/</span><span class="n">storage</span><span class="p">.</span><span class="n">cfg</span>
+<span class="n">dir</span><span class="o">:</span> <span class="n">local</span>
+    <span class="n">path</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">vz</span>
+    <span class="n">content</span> <span class="n">images</span><span class="p">,</span><span class="n">rootdir</span>
+    <span class="n">prune</span><span class="o">-</span><span class="n">backups</span> <span class="n">keep</span><span class="o">-</span><span class="n">all</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="n">dir</span><span class="o">:</span> <span class="n">HDD</span>
+    <span class="n">path</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">HDD</span>
+    <span class="n">content</span> <span class="n">backup</span><span class="p">,</span><span class="n">iso</span><span class="p">,</span><span class="n">vztmpl</span><span class="p">,</span><span class="n">snippets</span>
+    <span class="n">prune</span><span class="o">-</span><span class="n">backups</span> <span class="n">keep</span><span class="o">-</span><span class="n">all</span><span class="o">=</span><span class="mi">1</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="ludus-range">Ludus range</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>export LUDUS_API_KEY='INFR.redacted'
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="part-2---vps-wireguard-and-firewall-rules">Part 2 - VPS, WireGuard, and Firewall Rules</h2>
+
+<h3 id="wireguard-configuration">Wireguard configuration</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>wg-quick up ~/bridge.conf
+
+<span class="nb">sudo </span>wg-quick up bridge
+
+<span class="nb">sudo </span>wg show
+
+<span class="nb">sudo </span>wg-quick down bridge
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Make sure to update the keys, network interface names, and 10.8.8.0/24 CIDR in all configuration files to match your specific setup.</p>
+
+<p><strong>PROXMOX:</strong></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+</pre></td><td class="rouge-code"><pre><span class="s">root@proxmox:~# cat /etc/wireguard/bridge.conf</span>
+<span class="pi">[</span><span class="nv">Interface</span><span class="pi">]</span>
+<span class="s">Address = 10.10.10.3/32</span>
+<span class="s">PrivateKey = redacted</span>
+<span class="s">ListenPort = </span><span class="m">60066</span>
+                                                                                                                                                                                <span class="c1"># PostUp: Set up forwarding rules, NAT, and routing</span>
+<span class="s">PostUp = iptables -A FORWARD -i bridge -j ACCEPT</span>
+<span class="s">PostUp = iptables -A FORWARD -o bridge -j ACCEPT</span>
+<span class="s">PostUp = iptables -t nat -A POSTROUTING -o enp4s0 -j MASQUERADE</span>
+<span class="s">PostUp = iptables -t nat -A POSTROUTING -s 10.10.10.1 -o vmbr1000 -j MASQUERADE</span>
+<span class="s">PostUp = iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -d 10.8.8.0/24 -j MASQUERADE</span>
+<span class="s">PostUp = ip route del 10.8.8.0/24 via 192.0.2.108 dev vmbr1000 2&gt;/dev/null || </span><span class="kc">true</span>
+<span class="s">PostUp = ip route add 10.8.8.0/24 via 192.0.2.108 dev vmbr1000</span>
+
+<span class="c1"># PostDown: Clean up rules and routing (reverse order)</span>
+<span class="s">PostDown = ip route del 10.8.8.0/24 via 192.0.2.108 dev vmbr1000 2&gt;/dev/null || </span><span class="kc">true</span>
+<span class="s">PostDown = iptables -t nat -D POSTROUTING -s 10.10.10.0/24 -d 10.8.8.0/24 -j MASQUERADE 2&gt;/dev/null || </span><span class="kc">true</span>
+<span class="s">PostDown = iptables -t nat -D POSTROUTING -s 10.10.10.1 -o vmbr1000 -j MASQUERADE 2&gt;/dev/null || </span><span class="kc">true</span>
+<span class="s">PostDown = iptables -t nat -D POSTROUTING -o enp4s0 -j MASQUERADE 2&gt;/dev/null || </span><span class="kc">true</span>
+<span class="s">PostDown = iptables -D FORWARD -o bridge -j ACCEPT 2&gt;/dev/null || </span><span class="kc">true</span>
+<span class="s">PostDown = iptables -D FORWARD -i bridge -j ACCEPT 2&gt;/dev/null || </span><span class="kc">true</span>
+
+<span class="pi">[</span><span class="nv">Peer</span><span class="pi">]</span>
+<span class="s">PublicKey = redacted</span>
+<span class="s">AllowedIPs = 10.10.10.0/24</span>
+<span class="s">Endpoint = 94.141.102.251:51820</span>
+<span class="s">PersistentKeepalive = </span><span class="m">25</span>
+<span class="s">root@proxmox:~#</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><strong>Bridge on VPS:</strong></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="rouge-code"><pre><span class="s">root@878172:~# cat /etc/wireguard/wg0.conf</span>
+<span class="pi">[</span><span class="nv">Interface</span><span class="pi">]</span>
+<span class="s">Address = 10.10.10.1/24</span>
+<span class="s">ListenPort = </span><span class="m">51820</span>
+<span class="s">PrivateKey = redacted</span>
+<span class="s">PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -A FORWARD -o wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE; ip route add 10.8.8.0/24 via 10.10.10.3 dev wg0</span>
+<span class="s">PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -D FORWARD -o wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o ens3 -j MASQUERADE; ip route del 10.8.8.0/24 via 10.10.10.3 dev wg0</span>
+
+<span class="c1"># Router to networks (bridge interface on proxmox)</span>
+<span class="pi">[</span><span class="nv">Peer</span><span class="pi">]</span>
+<span class="s">PublicKey = redacted</span>
+<span class="s">AllowedIPs = 10.8.0.0/16, 10.10.10.3/32</span>
+<span class="s">Endpoint = 192.168.1.123:60066</span>
+<span class="s">PersistentKeepalive = </span><span class="m">25</span>
+
+<span class="c1"># Client 1</span>
+<span class="pi">[</span><span class="nv">Peer</span><span class="pi">]</span>
+<span class="s">PublicKey = redacted</span>
+<span class="s">AllowedIPs = 10.10.10.5/32</span>
+<span class="s">root@878172:~#</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><strong>Client 1 VPN</strong></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="pi">[</span><span class="nv">Interface</span><span class="pi">]</span>
+<span class="s">PrivateKey = redacted</span>
+<span class="s">Address = 10.10.10.5/32</span>
+<span class="s">DNS = 1.1.1.1, 8.8.8.8</span>
+
+<span class="pi">[</span><span class="nv">Peer</span><span class="pi">]</span>
+<span class="s">PublicKey = redacted</span>
+<span class="s">AllowedIPs = 10.8.0.0/16, 10.10.10.0/24</span>
+<span class="s">Endpoint = 94.141.102.251:51820</span>
+<span class="s">PersistentKeepalive = </span><span class="m">25</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="part-3---socat-udp-and-ssh-tunneling">Part 3 - Socat UDP and SSH Tunneling</h2>
+
+<h2 id="part-4---hash-cracking-station-with-nvidia-discrete-gpu">Part 4 - Hash Cracking Station with NVIDIA Discrete GPU</h2>
+
+<h3 id="guest-os-kali">Guest OS (kali)</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nb">sudo </span>nano /etc/default/grub
+<span class="nb">sudo </span>update-grub
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt vfio-pci ids=10de:2504,10de:228e"
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="rouge-code"><pre><span class="nb">sudo </span>apt <span class="nb">install </span>nvidia-driver nvidia-cuda-toolkit nvidia-settings
+<span class="nb">sudo </span>apt <span class="nb">install </span>nvidia-cuda-toolkit
+<span class="nb">sudo </span>apt <span class="nb">install </span>nvidia-settings
+<span class="nb">sudo </span>nvidia-smi
+lspci <span class="nt">-k</span> <span class="nt">-nn</span> | <span class="nb">grep</span> <span class="nt">-A</span> 2 <span class="nt">-i</span> nvidia
+<span class="nb">sudo </span>modprobe nvidia
+<span class="nb">sudo </span>dmesg| <span class="nb">grep</span> <span class="nt">-i</span> nvidia
+<span class="nb">sudo </span>hashcat <span class="nt">-I</span>
+
+
+<span class="nb">sudo </span>apt-get purge nvidia<span class="k">*</span>
+<span class="nb">sudo </span>apt-get autoremove
+
+<span class="nb">sudo </span>apt <span class="nb">install </span>xrdp <span class="nt">-y</span>
+<span class="nb">sudo </span>systemctl start xrdp <span class="nt">-y</span>
+<span class="nb">sudo </span>systemctl start xrdp
+<span class="nb">sudo </span>systemctl <span class="nb">enable </span>xrdp
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>https://developer.download.nvidia.com/compute/nvidia-driver/redist/nvidia_driver/linux-x86_64/nvidia_driver-linux-x86_64-535.216.03-archive.tar.xz</p>
+
+<p>https://us.download.nvidia.com/XFree86/Linux-x86_64/570.144/NVIDIA-Linux-x86_64-570.144.run</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+</pre></td><td class="rouge-code"><pre>lspci <span class="nt">-nnk</span> | <span class="nb">grep</span> <span class="nt">-A</span> 3 <span class="nt">-i</span> nvidia
+dpkg <span class="nt">-l</span> | <span class="nb">grep </span>nvidia
+<span class="nb">sudo </span>modprobe nvidia
+dmesg | <span class="nb">grep </span>nvidia
+lspci <span class="nt">-nnk</span> | <span class="nb">grep</span> <span class="nt">-A</span> 3 <span class="nt">-i</span> vfio
+<span class="nb">sudo </span>dkms build <span class="nt">-m</span> nvidia <span class="nt">-v</span> 535.216.03
+<span class="nb">sudo </span>dkms <span class="nb">install</span> <span class="nt">-m</span> nvidia <span class="nt">-v</span> 535.216.03
+dmesg | <span class="nb">grep</span> <span class="nt">-i</span> nvidia
+<span class="nb">sudo </span>apt <span class="nb">install </span>linux-headers-6.11.2-amd64
+<span class="nb">sudo </span>dkms build <span class="nt">-m</span> nvidia <span class="nt">-v</span> 535.216.03
+<span class="nb">sudo </span>dkms <span class="nb">install</span> <span class="nt">-m</span> nvidia <span class="nt">-v</span> 535.216.03
+<span class="nb">sudo </span>apt remove <span class="nt">--purge</span> nvidia-<span class="k">*</span>
+<span class="nb">sudo </span>apt update <span class="nt">-y</span>
+<span class="nb">sudo </span>apt autoremove <span class="nt">-y</span>
+<span class="nb">sudo </span>apt <span class="nb">install </span>nvidia-driver
+<span class="nb">sudo </span>apt <span class="nb">install </span>linux-headers-<span class="si">$(</span><span class="nb">uname</span> <span class="nt">-r</span><span class="si">)</span>
+<span class="nb">sudo </span>dkms build <span class="nt">-m</span> nvidia <span class="nt">-v</span> 535.216.03
+<span class="nb">sudo </span>dkms <span class="nb">install</span> <span class="nt">-m</span> nvidia <span class="nt">-v</span> 535.216.03
+<span class="nb">sudo </span>modprobe nvidia
+nvidia-smi
+lsmod | <span class="nb">grep </span>nvidia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="host-proxmox">Host (Proxmox)</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt pcie_acs_override=downstream,multifunction nofb nomodeset video=vesafb:off,efifb:off"
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>/etc/modprobe.d/blacklist.conf
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre>blacklist nouveau snd_hda_intel
+options nouveau modeset=0
+
+blacklist radeon
+blacklist nouveau
+blacklist nvidia
+blacklist nvidiafb
+options vfio_iommu_type1 allow_unsafe_interrupts=1
+options kvm ignore_msrs=1
+blacklist nvidiafb
+options vfio-pci ids=10de:2504,10de:228e disable_vga=1
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>/etc/pve/qemu-server/100.conf
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre>boot: order=scsi0;net0
+cores: 2
+cpu: x86-64-v2-AES
+hostpci0: mapping=GPU
+memory: 8192
+meta: creation-qemu=9.0.2,ctime=1737633367
+name: kali
+net0: virtio=BC:24:11:76:D7:7F,bridge=vmbr0,firewall=1
+numa: 0
+ostype: l26
+scsi0: HDD:vm-100-disk-0,iothread=1,size=128G
+scsihw: virtio-scsi-single
+smbios1: uuid=d4c82d4b-194f-45af-9a4e-10c621533089
+sockets: 2
+vmgenid: 873207c3-c88c-4146-88e1-5af464242e64
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="sources">Sources</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>deb http://ftp.pl.debian.org/debian bookworm main contrib
+deb http://ftp.pl.debian.org/debian bookworm-updates main contrib
+deb http://security.debian.org bookworm-security main contrib
+
+deb [arch=amd64] https://apt.releases.hashicorp.com bookworm main
+deb http://download.proxmox.com/debian/ceph-quincy bookworm no-subscription
+deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="part-5---setting-up-a-redirector-domain-ssl-and-havoc-dns-listener">Part 5 - Setting Up a Redirector: Domain, SSL, and Havoc DNS Listener</h2>
+
+<p>Service</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre><span class="pi">[</span><span class="nv">Unit</span><span class="pi">]</span>
+<span class="s">Description=SSH Port Forwarding for apache web server</span>
+<span class="s">After=network.target</span>
+
+<span class="pi">[</span><span class="nv">Service</span><span class="pi">]</span>
+<span class="s">ExecStart=/usr/bin/ssh -N -L 0.0.0.0:80:127.0.0.1:80 -i /root/.ssh/id_rsa proxmox@192.168.1.123</span>
+<span class="s">Restart=always</span>
+<span class="s">RestartSec=10</span>
+
+<span class="pi">[</span><span class="nv">Install</span><span class="pi">]</span>
+<span class="s">WantedBy=multi-user.target</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
